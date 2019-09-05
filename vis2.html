@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>D3: Cancer Survival Plots in Tufte's Style</title>
+		<script type="text/javascript" src="d3.js"></script> 
+		<style type="text/css">
+			/* No style rules here yet */		
+		</style>
+	</head>
+
+
+
+
+	<body> 
+		
+	       <script type="text/javascript">
+
+	      // set up svg area in body of html
+	      var margin = {top: 780, right: 20, bottom: 20, left: 380},
+    		w = 2400 - margin.left - margin.right,
+    		h = 2800 - margin.top - margin.bottom; 
+	       var svg = d3.select("body")
+				.append("svg")
+	       			.attr("width", w + margin.left + margin.right)
+	       			.attr("height",h + margin.top + margin.bottom)	
+		var dataset;
+
+               // function to create SVG path statement from a list of points
+	       var lineGenerator = d3.line();
+		var rowConverter = function(d) {
+				return {
+					location: d.geo_entity_name,
+					periodone: parseFloat(d.periodone),
+					periodtwo: parseFloat(d.periodtwo),
+				};
+			}
+
+		
+	       // EDIT PATH this path as necessary 
+		d3.csv("pm25health.csv", rowConverter, function(data){
+			
+		         dataset = data;	
+			 console.log(data);
+
+			 svg.selectAll("path")	
+					.data(dataset)
+					.enter()
+					.append("path")				
+					.attr('d',
+						(function(d) 
+							{return lineGenerator ([[250, (2000-9*d.periodone)],
+										[700, (2000-9*d.periodtwo)]])
+												}))
+					.attr("stroke-width", 5)
+					.attr("stroke",function(d) 
+						{return ("rgba(" + parseInt(2*d.periodone)  + "," 
+									+parseInt(255-2*d.periodtwo) +"," +  parseInt(255-2*d.periodone) + " ,0.5)")} )
+                                        .attr("fill", "none")
+                    .on("mouseover", function() {
+			   		d3.select(this)
+			   			.attr("stroke", "orange")})
+
+                    .on("mouseout", function(d) {
+				   	d3.select(this)
+					.attr("stroke",function(d) 
+						{return ("rgba(" + parseInt(2*d.periodone)  + "," 
+									+parseInt(255-2*d.periodtwo) +"," +  parseInt(255-2*d.periodone) + " ,0.5)")} );
+			   });
+
+			 svg.selectAll("text")
+					.data(dataset)
+				        .enter()
+					.append("text")
+					.text(function(d) {return (d.location)})
+					.attr("font-size","14px")
+					.attr("fill","black")
+					.attr("stroke",function(d) 
+						{return ("rgba(" + parseInt(2*d.periodone)  + "," 
+									+parseInt(255-2*d.periodtwo) +"," +  parseInt(255-2*d.periodone) + " ,0.5)")} )
+					.attr("x",10)
+                    .attr("font-family", "sans-serif")
+				    .attr("y",function(d) {return 2000-9*d.periodone})
+				    .on("mouseover", function() {
+			   		d3.select(this)
+			   			.attr("stroke", "orange")})
+                    
+                    .on("mouseout", function(d) {
+				   	d3.select(this)
+					.attr("stroke",function(d) 
+						{return ("rgba(" + parseInt(2*d.periodone)  + "," 
+									+parseInt(255-2*d.periodtwo) +"," +  parseInt(255-2*d.periodone) + " ,0.5)")
+					})});
+				    
+
+			svg.selectAll("text2")
+			   .data(dataset)
+			   .enter()
+			   .append("text")
+			   .text(function(d) {
+			   		return d.periodone;
+			   })
+			   .attr("x", function(d, i) {
+			   		return 250;
+			   })
+			   .attr("y",function(d) {return 2000-9*d.periodone})
+			   
+			   .attr("font-family", "sans-serif")
+			   .attr("font-size", "11px")
+			   .attr("fill", "black")
+			   .attr("stroke",function(d) 
+						{return ("rgba(" + parseInt(2*d.periodone)  + "," 
+									+parseInt(255-2*d.periodtwo) +"," +  parseInt(255-2*d.periodone) + " ,0.5)")} )
+               .attr("fill", "none")
+               .on("mouseover", function() {
+			   		d3.select(this)
+			   			.attr("stroke", "orange")})
+               .on("mouseout", function(d) {
+				   	d3.select(this)
+					.attr("stroke",function(d) 
+						{return ("rgba(" + parseInt(2*d.periodone)  + "," 
+									+parseInt(255-2*d.periodtwo) +"," +  parseInt(255-2*d.periodone) + " ,0.5)")} );
+					});
+
+			svg.selectAll("text3")
+			   .data(dataset)
+			   .enter()
+			   .append("text")
+			   .text(function(d) {
+			   		return d.periodtwo;
+			   })
+			   .attr("x", function(d, i) {
+			   		return 700;
+			   })
+			   .attr("y", function(d) {
+			   		return (2000-9*d.periodtwo);
+			   })
+			   .attr("font-family", "sans-serif")
+			   .attr("font-size", "11px")
+			   .attr("fill", "black")
+			   .attr("stroke",function(d) 
+						{return ("rgba(" + parseInt(2*d.periodone)  + "," 
+									+parseInt(255-2*d.periodtwo) +"," +  parseInt(255-2*d.periodone) + " ,0.5)")} )
+                                        .attr("fill", "none")
+                    .on("mouseover", function() {
+			   		d3.select(this)
+			   			.attr("stroke", "orange")})
+                    
+                    .on("mouseout", function(d) {
+				   	d3.select(this)
+					.attr("stroke",function(d) 
+						{return ("rgba(" + parseInt(2*d.periodone)  + "," 
+									+parseInt(255-2*d.periodtwo) +"," +  parseInt(255-2*d.periodone) + " ,0.5)")} );
+					});
+
+					svg.selectAll("text4")
+					.data(dataset)
+				        .enter()
+					.append("text")
+					.text(function(d) {return (d.location)})
+					.attr("font-size","14px")
+					.attr("fill","black")
+					.attr("stroke",function(d) 
+						{return ("rgba(" + parseInt(2*d.periodtwo)  + "," 
+									+parseInt(255-2*d.periodtwo) +"," +  parseInt(255-2*d.periodtwo) + " ,0.5)")} )
+					.attr("x",750)
+                    .attr("font-family", "sans-serif")
+				    .attr("y",function(d) {return 2000-9*d.periodtwo})
+				    .on("mouseover", function() {
+			   		d3.select(this)
+			   			.attr("stroke", "orange")})
+                    
+                    .on("mouseout", function(d) {
+				   	d3.select(this)
+					.attr("stroke",function(d) 
+						{return ("rgba(" + parseInt(2*d.periodtwo)  + "," 
+									+parseInt(255-2*d.periodtwo) +"," +  parseInt(255-2*d.periodtwo) + " ,0.5)")
+					})});
+
+            svg.selectAll("text6")
+			   .data(dataset)
+			   .enter()
+			   .append("text")
+			   .text("2005-2007")
+			   .attr("x", function(d, i) {
+			   		return 250;
+			   })
+			   .attr("y", function(d) {
+			   		return 10;
+			   })
+			   .attr("font-family", "sans-serif")
+			   .attr("font-size", "12px")
+			   .attr("fill", "black");
+
+
+			svg.selectAll("text9")
+			   .data(dataset)
+			   .enter()
+			   .append("text")
+			   .text("2009-2011")
+			   .attr("x", function(d, i) {
+			   		return 700;
+			   })
+			   .attr("y", function(d) {
+			   		return 10;
+			   })
+			   .attr("font-family", "sans-serif")
+			   .attr("font-size", "12px")
+			   .attr("fill", "black");
+
+			svg.append("text")
+		    .attr("x", 100 )
+		    .attr("y", 9)
+		    .attr("font-family", "sans-serif")
+			   .attr("font-size", "12px")
+			   .attr("fill", "black")
+		    .style("text-anchor", "middle")
+		    .text("PM2.5-Attributable Asthma ED Visits (Adults):");
+
+			});
+
+
+		</script>
+	</svg>
+
+        </body>
+	
+</html>

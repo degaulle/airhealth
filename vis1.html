@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>D3: Create Bar Chart</title>
+		<script type="text/javascript" src="d3.js"></script> 
+		<style type="text/css">
+			/* No style rules here yet */		
+		</style>
+	</head>
+	<body> 
+		
+	       <script type="text/javascript">
+
+	       // set up svg area in body of html
+	    var margin = {top: 20, right: 20, bottom: 50, left: 70};
+    	var w = 1200 - margin.left - margin.right;
+    	var h = 500 - margin.top - margin.bottom;   
+	    var svg = d3.select("body")
+					.append("svg")
+	       			.attr("width", w + margin.left + margin.right)
+	       			.attr("height",h + margin.top + margin.bottom)	
+	       			.append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+
+		var dataset;
+		var barPadding = 1;
+		
+
+               // function to create SVG path statement from a list of points
+	 //       var lineGenerator = d3.line();
+		var rowConverter = function(d) {
+				return {
+					location: d.geo_entity_name,
+					periodone: parseFloat(d.periodone),
+					periodtwo: parseFloat(d.periodtwo),
+					childone: parseFloat(d.childperiodone),
+					childtwo: parseFloat(d.childperiodtwo),
+					average: parseFloat(d.average),
+				};
+			}
+
+		d3.csv("pm25health.csv", rowConverter, function(data){
+		
+
+		        dataset = data;
+			 	console.log(data);
+
+			var xScale = d3.scaleBand()
+				.domain(d3.range(1, dataset.length+1, 1))
+				.range([barPadding, w - barPadding]);	 	
+
+			var yScale = d3.scaleLinear()
+				.domain([0, d3.max(dataset, function(d) { return d.periodone+d.periodtwo+d.childone+d.childtwo; })])
+				.range([h-barPadding, barPadding]);
+
+			//Define X axis
+			var xAxis = d3.axisBottom()
+							  .scale(xScale)
+							  .ticks();
+
+			//Define Y axis
+			var yAxis = d3.axisLeft()
+							  .scale(yScale)
+							  .ticks(10);	
+
+			svg.selectAll(".rect1")
+			   .data(dataset)
+			   .enter()
+			   .append("rect")
+			   .attr("class", "rect1")
+			   .attr("x", function(d, i) {
+			   		return xScale(i+1)+ 2*barPadding;
+			   })
+			   .attr("y", function(d) {
+			   		return yScale(d.periodone);
+			   })
+			   .attr("width", w / dataset.length - 4*barPadding)
+			   .attr("height", function(d) {
+			   		return h-yScale(d.periodone);
+			   })
+			   .attr("fill", "blue");
+			  
+			svg.selectAll(".rect2")
+			   .data(dataset)
+			   .enter()
+			   .append("rect")
+			   .attr("class", "rect2")
+			   .attr("x", function(d, i) {
+			   		return xScale(i+1)+ 2*barPadding;
+			   })
+			   .attr("y", function(d) {
+			   		return yScale(d.periodtwo+d.periodone);
+			   })
+			   .attr("width", w / dataset.length - 4*barPadding)
+			   .attr("height", function(d) {
+			   		return yScale(d.periodone)-yScale(d.periodtwo+d.periodone);
+			   })
+			   .attr("fill", "orange");
+
+			svg.selectAll(".rect3")
+			   .data(dataset)
+			   .enter()
+			   .append("rect")
+			   .attr("class", "rect3")
+			   .attr("x", function(d, i) {
+			   		return xScale(i+1)+ 2*barPadding;
+			   })
+			   .attr("y", function(d) {
+			   		return yScale(d.childone+d.periodtwo+d.periodone);
+			   })
+			   .attr("width", w / dataset.length - 4*barPadding)
+			   .attr("height", function(d) {
+			   		return yScale(d.periodtwo+d.periodone)-yScale(d.childone+d.periodtwo+d.periodone);
+			   })
+			   .attr("fill", "green");  
+
+			svg.selectAll(".rect4")
+			   .data(dataset)
+			   .enter()
+			   .append("rect")
+			   .attr("class", "rect4")
+			   .attr("x", function(d, i) {
+			   		return xScale(i+1)+ 2*barPadding;
+			   })
+			   .attr("y", function(d) {
+			   		return yScale(d.childtwo+d.childone+d.periodtwo+d.periodone);
+			   })
+			   .attr("width", w / dataset.length - 4*barPadding)
+			   .attr("height", function(d) {
+			   		return yScale(d.childone+d.periodtwo+d.periodone)-yScale(d.childtwo+d.childone+d.periodtwo+d.periodone);
+			   })
+			   .attr("fill", "purple");
+
+			   svg.selectAll("text")
+			   .data(dataset)
+			   .enter()
+			   .append("text")
+			   .attr("x", function(d, i) {
+			   		return xScale(i+1)+ 15*barPadding;
+			   })
+			   .attr("y", function(d) {
+			   		return yScale(d.childtwo+d.childone+d.periodtwo+d.periodone)-15;
+			   })
+			   .attr("font-size", "9px")
+			   .style("text-anchor", "middle")
+            // .attr("dx", "-.8em")
+            // .attr("dy", ".15em")
+            // .attr("transform", function(d) {
+            //     return "rotate(-90)" 
+            //     })
+			   .text(function(d) {return d.location});
+
+
+			d3.select("svg")
+				.on("click", function() {
+			var xScale = d3.scaleBand()
+				.domain(d3.range(1, dataset.length+1, 1))
+				.range([barPadding, w - barPadding]);	 	
+
+			var yScale = d3.scaleLinear()
+				.domain([0, d3.max(dataset, function(d) { return d.childone+2; })])
+				.range([h-barPadding, barPadding]);
+
+			//Define X axis
+			var xAxis = d3.axisBottom()
+							  .scale(xScale)
+							  .ticks();
+
+			//Define Y axis
+			var yAxis = d3.axisLeft()
+							  .scale(yScale)
+							  .ticks(10);	
+
+			svg.selectAll(".rect1")
+			   .data(dataset)
+			   .transition()
+			   .attr("x", function(d, i) {
+			   		return xScale(i+1)+ 3 * barPadding;
+			   })
+			   .attr("y", function(d) {
+			   		return yScale(d.periodone);
+			   })
+			   .attr("width", 5)
+			   .attr("height", function(d) {
+			   		return h-yScale(d.periodone);
+			   })
+			   .attr("fill", "blue");
+			  
+			svg.selectAll(".rect2")
+			   .data(dataset)
+			   .transition()
+			   .attr("x", function(d, i) {
+			   		return xScale(i+1)+ 8*barPadding;
+			   })
+			   .attr("y", function(d) {
+			   		return yScale(d.periodtwo);
+			   })
+			   .attr("width", 5)
+			   .attr("height", function(d) {
+			   		return h-yScale(d.periodtwo);
+			   })
+			   .attr("fill", "orange");
+
+			svg.selectAll(".rect3")
+			   .data(dataset)
+			   .transition()
+			   .attr("x", function(d, i) {
+			   		return xScale(i+1)+ 13*barPadding;
+			   })
+			   .attr("y", function(d) {
+			   		return yScale(d.childone);
+			   })
+			   .attr("width", 5)
+			   .attr("height", function(d) {
+			   		return h-yScale(d.childone);
+			   })
+			   .attr("fill", "green"); 
+
+			svg.selectAll(".rect4")
+			   .data(dataset)
+			   .transition()
+			   .attr("x", function(d, i) {
+			   		return xScale(i+1)+ 18*barPadding;
+			   })
+			   .attr("y", function(d) {
+			   		return yScale(d.childtwo);
+			   })
+			   .attr("width", 5)
+			   .attr("height", function(d) {
+			   		return h-yScale(d.childtwo);
+			   })
+			   .attr("fill", "purple"); 
+
+
+			   //X axis
+			svg.selectAll(".x.axis")
+				.transition()
+				.call(xAxis);
+			
+			//Create Y axis
+			svg.selectAll(".y.axis")
+				.transition()
+				.call(yAxis);
+
+			d3.select("svg")
+				.on("click", function() {
+			var xScale = d3.scaleBand()
+				.domain(d3.range(1, dataset.length+1, 1))
+				.range([barPadding, w - barPadding]);	 	
+
+			var yScale = d3.scaleLinear()
+				.domain([0, 1])
+				.range([h-barPadding, barPadding]);
+
+			//Define X axis
+			var xAxis = d3.axisBottom()
+							  .scale(xScale)
+							  .ticks();
+
+			//Define Y axis
+			var yAxis = d3.axisLeft()
+							  .scale(yScale)
+							  .ticks(10)
+							  .tickFormat(d3.format(".1%"));	
+
+			svg.selectAll(".rect1")
+			   .data(dataset)
+			   .transition()
+			   .attr("x", function(d, i) {
+			   		return xScale(i+1)+ 2*barPadding;
+			   })
+			   .attr("y", function(d) {
+			   		return yScale(d.periodone/(d.periodone+d.periodtwo+d.childone+d.childtwo));
+			   })
+			   .attr("width", w / dataset.length - 4*barPadding)
+			   .attr("height", function(d) {
+			   		return h-yScale(d.periodone/(d.periodone+d.periodtwo+d.childone+d.childtwo));
+			   })
+			   .attr("fill", "blue");
+			  
+			svg.selectAll(".rect2")
+			   .data(dataset)
+			   .transition()
+			   .attr("x", function(d, i) {
+			   		return xScale(i+1)+ 2*barPadding;
+			   })
+			   .attr("y", function(d) {
+			   		return yScale((d.periodtwo+d.periodone)/(d.periodone+d.periodtwo+d.childone+d.childtwo));
+			   })
+			   .attr("width", w / dataset.length - 4*barPadding)
+			   .attr("height", function(d) {
+			   		return yScale(d.periodone/(d.periodone+d.periodtwo+d.childone+d.childtwo))-yScale((d.periodtwo+d.periodone)/(d.periodone+d.periodtwo+d.childone+d.childtwo));
+			   })
+			   .attr("fill", "orange");
+
+			svg.selectAll(".rect3")
+			   .data(dataset)
+			   .transition()
+			   .attr("x", function(d, i) {
+			   		return xScale(i+1)+ 2*barPadding;
+			   })
+			   .attr("y", function(d) {
+			   		return yScale((d.childone+d.periodtwo+d.periodone)/(d.periodone+d.periodtwo+d.childone+d.childtwo));
+			   })
+			   .attr("width", w / dataset.length - 4*barPadding)
+			   .attr("height", function(d) {
+			   		return yScale((d.periodtwo+d.periodone)/(d.periodone+d.periodtwo+d.childone+d.childtwo))-yScale((d.periodtwo+d.periodone+d.childone)/(d.periodone+d.periodtwo+d.childone+d.childtwo));
+			   })
+			   .attr("fill", "green"); 
+
+			   svg.selectAll(".rect4")
+			   .data(dataset)
+			   .transition()
+			   .attr("x", function(d, i) {
+			   		return xScale(i+1)+ 2*barPadding;
+			   })
+			   .attr("y", function(d) {
+			   		return 1;
+			   })
+			   .attr("width", w / dataset.length - 4*barPadding)
+			   .attr("height", function(d) {
+			   		return yScale((d.periodtwo+d.periodone+d.childone)/(d.periodone+d.periodtwo+d.childone+d.childtwo))-1;
+			   })
+			   .attr("fill", "purple");
+
+			   //X axis
+			svg.selectAll(".x.axis")
+				.transition()
+				.call(xAxis);
+			
+			//Create Y axis
+			svg.selectAll(".y.axis")
+				.transition()
+				.call(yAxis);
+		});
+		});
+
+			
+
+			//X axis
+			svg.append("g")
+				.attr("class", "x axis")
+				.attr("transform", "translate(0," + h + ")")
+				.call(xAxis);
+			
+			//Create Y axis
+			svg.append("g")
+				.attr("class", "y axis")
+				.attr("transform", "translate(" + (- barPadding) + ",0)")
+				.call(yAxis);
+
+			//Create Title 
+		    svg.append("text")
+		    .attr("x", w / 2 )
+		    .attr("y", 0)
+		    .style("text-anchor", "middle")
+		    .text("PM2.5-Attributable Asthma ED Visits by Population and Period (Click to switch views)");
+
+		    svg.append("rect")
+			      .attr("width", 10)
+			      .attr("height", 10)
+			      .attr("fill","blue")
+			      .attr("x", w / 2 - 400 )
+		    	  .attr("y", h+ margin.bottom/2);
+
+		    svg.append("rect")
+			      .attr("width", 10)
+			      .attr("height", 10)
+			      .attr("fill","orange")
+			      .attr("x", w / 2 - 200  )
+		    	  .attr("y", h + margin.bottom/2);
+
+		    svg.append("rect")
+			      .attr("width", 10)
+			      .attr("height", 10)
+			      .attr("fill","green")
+			      .attr("x", w / 2 + 150 )
+		    	  .attr("y", h+ margin.bottom/2);	  	  
+
+			svg.append("rect")
+			      .attr("width", 10)
+			      .attr("height", 10)
+			      .attr("fill","purple")
+			      .attr("x", w / 2 + 300 )
+		    	  .attr("y", h+ margin.bottom/2);
+
+		   	svg.append("text")
+			      .attr("x", w / 2 - 385 )
+		    	  .attr("y", h+ margin.bottom/2+10)
+		    	  .text("Adult(2005-2007)");
+
+		    svg.append("text")
+			      .attr("x", w / 2 - 185 )
+		    	  .attr("y", h+ margin.bottom/2+10)
+		    	  .text("Adult(2009-2011)");	
+		    svg.append("text")
+			      .attr("x", w / 2 + 165 )
+		    	  .attr("y", h+ margin.bottom/2+10)
+		    	  .text("Child(2005-2007)");		
+
+		   	svg.append("text")
+			      .attr("x", w / 2 + 315 )
+		    	  .attr("y", h+ margin.bottom/2+10)
+		    	  .text("Child(2009-2011)");	    
+			});
+
+			
+	</script>
+	</body>	
