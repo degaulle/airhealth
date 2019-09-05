@@ -1,6 +1,6 @@
 # Air quality and health in NYC - data visualization
-
-# To run it, please download all the files into one folder and open the terminal in this folder and run the following command:  python -m SimpleHTTPServer 8080 , and then open a browser window and go to http://localhost:8080/, and then you can see the three different visualizations.
+<b>sdfsd</b>
+To run it, please download all the files into one folder and open the terminal in this folder and run the following command:  python -m SimpleHTTPServer 8080 , and then open a browser window and go to http://localhost:8080/, and then you can see the three different visualizations.
 
 The dataset I select is New York City air quality surveillance data provided by Department of Health and Mental Hygiene (DOHMH) on the research of different air pollutants’ effect on various diseases in different districts of NYC (UHF42) between 2005-2007 and 2009-2011. For my visualization, I chose to study the effect of PM2.5 on Asthma, which is reflected in the data with PM2.5-Attributable Asthma ED Visits, indicating the number of hospital ED visits in the given district that is caused by PM2.5.
 
