@@ -7,6 +7,9 @@ then open a browser window and go to http://localhost:8080/, and then you can se
 
 The dataset I select is New York City air quality surveillance data provided by Department of Health and Mental Hygiene (DOHMH) on the research of different air pollutants’ effect on various diseases in different districts of NYC (UHF42) between 2005-2007 and 2009-2011. For my visualization, I chose to study the effect of PM2.5 on Asthma, which is reflected in the data with PM2.5-Attributable Asthma ED Visits, indicating the number of hospital ED visits in the given district that is caused by PM2.5.
 
+data source: https://data.cityofnewyork.us/Environment/Air-Quality/c3uy-2p5r
+excerpt in the csv file
+
 <b> Vis1: Question: What is the difference of PM2.5 effects on Asthma ED Visits between adults and children in the two time periods? </b>
 
 Data: For this question, I need the data of PM2.5-Attributable Asthma ED Visits by child and by adult in the two research periods: 2005-2007 and 2009-2011.
